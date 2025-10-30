@@ -1,0 +1,22 @@
+name: Frommer Daily Watch
+on:
+  schedule:
+    - cron: '0 17 * * *'   # runs daily at 17:00 UTC (9 a.m. Pacific)
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install deps
+        run: pip install requests beautifulsoup4
+      - name: Run watcher
+        env:
+          NOTIFY_METHOD: ${{ secrets.NOTIFY_METHOD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python frommer_watcher.py
